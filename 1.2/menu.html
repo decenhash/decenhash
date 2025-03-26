@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo_small.jpg" type="image/jpeg">
+    <title>DecenHash</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            max-width: 90%;
+            width: 600px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(128, 0, 128, 0.2);
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(128, 0, 128, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        input:focus {
+            border-color: #9c27b0;
+            box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.1);
+            background-color: white;
+        }
+        
+        .search-button {
+            padding: 0.7rem 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            background: #9c27b0;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .search-button:hover {
+            
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 1rem;
+        }
+        
+        .menu-button {
+            padding: 1rem 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            background: #9c27b0;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+        
+        .menu-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(156, 39, 176, 0.2);
+        }
+        
+        .menu-button:active {
+            transform: translateY(1px);
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="search-container">
+            <input type="text" id="inputText" placeholder="Search...">
+        </div>
+        
+        <button class="search-button" onclick="generateHash()">Search</button>
+        
+        <div class="menu-grid">        
+            <a href="index.php" class="menu-button">Upload</a>                      
+            <a href="register.php" class="menu-button">Register</a> 
+            <a href="metadata.php" class="menu-button">Metadata</a>
+            <a href="thumb.php" class="menu-button">Thumb</a> 
+            <a href="servers.php" class="menu-button">Servers</a>
+            <a href="verify.php" class="menu-button">Verify</a>     
+            <a href="blocks.php" class="menu-button">Block</a>    
+        </div>   
+    </div>
+
+    <script>
+        async function sha256(message) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+        }
+        
+        async function generateHash() {
+            const input = document.getElementById("inputText").value;
+            if (input.trim() === "") return;
+            const hash = await sha256(input);
+            window.location.href = `data/${hash}/index.html`;
+        }
+    </script>
+</body>
+</html>
