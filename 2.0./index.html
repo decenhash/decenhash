@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Storage Solution</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --light: #ecf0f1;
+            --dark: #1a252f;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            background-color: var(--light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .top-nav {
+            background-color: var(--primary);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1.5rem;
+        }
+        .top-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .top-nav a:hover {
+            color: var(--secondary);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 2rem;
+        }
+        .lang-toggle {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .lang-toggle:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        .icon {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-right: 1rem;
+            margin-top: 0.3rem;
+        }
+        .feature-content h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        .divider {
+            height: 1px;
+            background: #ddd;
+            margin: 2rem 0;
+        }
+        .social-section {
+            margin-top: 3rem;
+            text-align: center;
+        }
+        .social-title {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .social-link {
+            color: var(--primary);
+            font-size: 2rem;
+            transition: color 0.3s;
+        }
+        .social-link:hover {
+            color: var(--secondary);
+        }
+        footer {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        .footer-text {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="index.php"><i class="fas fa-upload"></i> Upload</a>
+        <a href="index_json.html"><i class="fas fa-share-alt"></i>Share</a>
+        <a href="blockchain.php"><i class="fas fa-link"></i> Blockchain</a>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1 id="main-title">Uma blockchain que registra quanto cada usuário depositou em um arquivo</h1>
+            <button class="lang-toggle" id="lang-toggle">English</button>
+        </header>
+
+        <div class="divider"></div>
+
+        <h2 id="applications-title">Algumas aplicações incluem:</h2>
+
+        <div class="feature">
+            <div class="icon"><i class="fas fa-database"></i></div>
+            <div class="feature-content">
+                <h3 id="feature1-title">Armazenamento de arquivos descentralizado</h3>
+                <p id="feature1-text">Cada depósito pode representar espaço de armazenamento pago.</p>
+            </div>
+        </div>
+
+        <div class="feature">
+            <div class="icon"><i class="fas fa-hand-holding-usd"></i></div>
+            <div class="feature-content">
+                <h3 id="feature2-title">Financiamento coletivo ou crowdfunding</h3>
+                <p id="feature2-text">Os depósitos podem indicar contribuições para um projeto armazenado no arquivo.</p>
+            </div>
+        </div>
+
+        <div class="feature">
+            <div class="icon"><i class="fas fa-chart-pie"></i></div>
+            <div class="feature-content">
+                <h3 id="feature3-title">Propriedade fracionada de um ativo digital</h3>
+                <p id="feature3-text">O arquivo poderia representar um bem digital, e os depósitos indicariam participação proporcional.</p>
+            </div>
+        </div>
+
+        <div class="social-section">
+            <h3 class="social-title" id="social-title">Conecte-se conosco</h3>
+            <div class="social-links">
+                <a href="https://t.me/decenhash" class="social-link" title="Telegram"><i class="fab fa-telegram"></i></a>
+                <a href="mailto:decenhash@gmail.com" class="social-link" title="WhatsApp"><i class="fas fa-envelope"></i></a>
+                <a href="https://sourceforge.net/projects/decenhash" class="social-link" title="SourceForge"><i class="fab fa-osi"></i></a>
+                <a href="https://github.com/decenhash" class="social-link" title="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p class="footer-text" id="footer-text">© 2023 Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        const translations = {
+            pt: {
+                mainTitle: "Uma blockchain que registra quanto cada usuário depositou em um arquivo",
+                applicationsTitle: "Algumas aplicações incluem:",
+                feature1Title: "Armazenamento de arquivos descentralizado",
+                feature1Text: "Cada depósito pode representar espaço de armazenamento pago.",
+                feature2Title: "Financiamento coletivo ou crowdfunding",
+                feature2Text: "Os depósitos podem indicar contribuições para um projeto armazenado no arquivo.",
+                feature3Title: "Propriedade fracionada de um ativo digital",
+                feature3Text: "O arquivo poderia representar um bem digital, e os depósitos indicariam participação proporcional.",
+                socialTitle: "Conecte-se conosco",
+                footerText: "© 2023 Todos os direitos reservados",
+                toggleButton: "English"
+            },
+            en: {
+                mainTitle: "A blockchain that records how much each user has deposited in a file",
+                applicationsTitle: "Some applications include:",
+                feature1Title: "Decentralized file storage",
+                feature1Text: "Each deposit can represent paid storage space.",
+                feature2Title: "Crowdfunding",
+                feature2Text: "Deposits can indicate contributions to a project stored in the file.",
+                feature3Title: "Fractional ownership of a digital asset",
+                feature3Text: "The file could represent a digital asset, and deposits would indicate proportional ownership.",
+                socialTitle: "Connect with us",
+                footerText: "© 2023 All rights reserved",
+                toggleButton: "Português"
+            }
+        };
+
+        const langToggle = document.getElementById('lang-toggle');
+        let currentLang = 'pt';
+
+        langToggle.addEventListener('click', () => {
+            currentLang = currentLang === 'pt' ? 'en' : 'pt';
+            updateLanguage();
+        });
+
+        function updateLanguage() {
+            document.getElementById('main-title').textContent = translations[currentLang].mainTitle;
+            document.getElementById('applications-title').textContent = translations[currentLang].applicationsTitle;
+            document.getElementById('feature1-title').textContent = translations[currentLang].feature1Title;
+            document.getElementById('feature1-text').textContent = translations[currentLang].feature1Text;
+            document.getElementById('feature2-title').textContent = translations[currentLang].feature2Title;
+            document.getElementById('feature2-text').textContent = translations[currentLang].feature2Text;
+            document.getElementById('feature3-title').textContent = translations[currentLang].feature3Title;
+            document.getElementById('feature3-text').textContent = translations[currentLang].feature3Text;
+            document.getElementById('social-title').textContent = translations[currentLang].socialTitle;
+            document.getElementById('footer-text').textContent = translations[currentLang].footerText;
+            langToggle.textContent = translations[currentLang].toggleButton;
+        }
+    </script>
+</body>
+</html>

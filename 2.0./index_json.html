@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecenHash - File Discovery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-title {
+            text-align: center;
+            font-size: 3.5rem;
+            color: #2c3e50;
+            margin: 20px 0 10px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+        
+        .search-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        #search-input {
+            padding: 12px 20px;
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .entries-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .entry {
+            width: 300px;
+            height: 200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .entry.whatsapp {
+            border-top: 5px solid #25D366;
+        }
+        
+        .entry.telegram {
+            border-top: 5px solid #0088cc;
+        }
+        
+        .entry.other {
+            border-top: 5px solid #666666;
+        }
+        
+        .entry:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .thumbnail {
+            width: 100%;
+            height: 140px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .no-thumb {
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .info {
+            padding: 10px;
+        }
+        
+        .title {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 5px;
+        }
+        
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            margin: 40px 0;
+            width: 100%;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: auto;
+        }
+        
+        .footer-text {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .footer-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .footer-button:hover {
+            background-color: #45a049;
+            text-decoration: none;
+            color: white;
+        }
+
+        .plus-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 40px;
+            height: 40px;
+            background-color: #888888;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .plus-button:hover {
+            background-color: #666666;
+        }
+
+        /* Container for demonstration purposes */
+        .container-circle {
+            position: relative;
+            width: 95%;
+            height: 95%;
+            border: 1px solid #ccc;
+        }
+
+    </style>
+</head>
+<body>
+  <div class="container-circle">
+        <a href="index.php" class="plus-button">+</a>
+    </div>
+
+    <div class="container">
+        
+        <h1 class="main-title">DecenHash</h1>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by title, user, category, or date...">
+        </div>
+        
+        <button id="refresh-btn">Search</button>
+        <div class="entries-grid" id="entries-grid">
+            <!-- Entries will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <footer>
+        <p class="footer-text">
+            <a href="insert.php" class="footer-button">New link +</a>
+        </p>
+    </footer>
+
+    <script>
+        // Current entries loaded from files.json
+        let allEntries = [];
+        let currentEntries = [];
+
+        // Function to filter entries based on search term
+        function filterEntries(searchTerm) {
+            if (!searchTerm) {
+                return [...allEntries];
+            }
+            
+            const term = searchTerm.toLowerCase();
+            return allEntries.filter(entry => {
+                // Check each property that might contain the search term
+                return (
+                    (entry.title && entry.title.toLowerCase().includes(term)) ||
+                    (entry.user && entry.user.toLowerCase().includes(term)) ||
+                    (entry.category && entry.category.toLowerCase().includes(term)) ||
+                    (entry.date && entry.date.toLowerCase().includes(term))
+                );
+            });
+        }
+
+        // Function to check if thumbnail exists on the current server
+        async function checkThumbnail(hash, extension) {
+            try {
+                const thumbPath = `thumbs/${hash}${extension}`;
+                const response = await fetch(thumbPath, { method: 'HEAD' });
+                return response.ok;
+            } catch (error) {
+                console.error('Error checking thumbnail:', error);
+                return false;
+            }
+        }
+
+        // Function to compute SHA-256 hash
+        async function sha256(message) {
+            // Encode as UTF-8
+            const msgBuffer = new TextEncoder().encode(message);
+            
+            // Hash the message
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            
+            // Convert to hex string
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            return hashHex;
+        }
+
+        // Function to check if a string is a valid SHA-256 hash
+        function isValidSHA256(hash) {
+            return /^[a-f0-9]{64}$/i.test(hash);
+        }
+
+        // Function to get category class based on entry's category
+        function getCategoryClass(entry) {
+            if (!entry.category) return 'other';
+            
+            const category = entry.category.toLowerCase();
+            if (category.includes('whatsapp')) return 'whatsapp';
+            if (category.includes('telegram')) return 'telegram';
+            return 'other';
+        }
+
+        // Function to display entries
+        async function displayEntries(entriesToDisplay) {
+            const grid = document.getElementById('entries-grid');
+            grid.innerHTML = '';
+
+            if (entriesToDisplay.length === 0) {
+                grid.innerHTML = '<div class="no-results">No matching entries found</div>';
+                return;
+            }
+
+            // Show first 6 results (or all if less than 6)
+            const entriesToShow = entriesToDisplay.slice(0, 6);
+            
+            // Create all entry elements first
+            const entryElements = [];
+            
+            for (const entry of entriesToShow) {
+                const entryElement = document.createElement('div');
+                const categoryClass = getCategoryClass(entry);
+                entryElement.className = `entry ${categoryClass}`;
+                
+                // Create a placeholder first
+                entryElement.innerHTML = `
+                    <div class="thumbnail">
+                        <div class="no-thumb">loading...</div>
+                    </div>
+                    <div class="info">
+                        <div class="title" title="${entry.title || 'Untitled'}">${entry.title || 'Untitled'}</div>
+                        <div class="meta">
+                            <span>${entry.user || 'Anonymous'}</span>
+                            <span>${entry.date || 'Unknown date'}</span>
+                        </div>
+                        ${entry.category ? `<div class="meta"><span>Category: ${entry.category}</span></div>` : ''}
+                    </div>
+                `;
+                
+                // Add click event to open the URL directly in a new tab
+                entryElement.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (entry.url) {
+                        window.open(entry.url, '_blank');
+                    }
+                });
+                
+                grid.appendChild(entryElement);
+                entryElements.push({ element: entryElement, entry });
+            }
+            
+            // Now check thumbnails and update each entry
+            for (const { element, entry } of entryElements) {
+                if (entry.hash && entry.extension) {
+                    const thumbExists = await checkThumbnail(entry.hash, entry.extension);
+                    const thumbPath = thumbExists ? `thumbs/${entry.hash}${entry.extension}` : '';
+                    
+                    element.querySelector('.thumbnail').innerHTML = thumbExists 
+                        ? `<img src="${thumbPath}" alt="${entry.title || 'Untitled'}">` 
+                        : '<div class="no-thumb">no thumb</div>';
+                } else {
+                    element.querySelector('.thumbnail').innerHTML = '<div class="no-thumb">no thumb</div>';
+                }
+            }
+        }
+
+        // Function to load entries from files.json
+        async function loadEntries() {
+            try {
+                const response = await fetch('files.json');
+                if (response.ok) {
+                    allEntries = await response.json();
+                    currentEntries = [...allEntries];
+                    displayEntries(currentEntries);
+                } else {
+                    console.error('Failed to load entries:', response.status);
+                    allEntries = [];
+                    currentEntries = [];
+                    displayEntries([]);
+                }
+            } catch (error) {
+                console.error('Error loading entries:', error);
+                allEntries = [];
+                currentEntries = [];
+                displayEntries([]);
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load entries from files.json
+            loadEntries();
+
+            // Search input functionality
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim();
+                currentEntries = filterEntries(searchTerm);
+                displayEntries(currentEntries);
+            });
+
+            // Refresh button functionality
+            document.getElementById('refresh-btn').addEventListener('click', async () => {
+                const userInput = document.getElementById('search-input').value.trim();
+                
+                if (!userInput) {
+                    // If no input, just refresh from all entries
+                    currentEntries = [...allEntries];
+                    displayEntries(currentEntries);
+                    return;
+                }
+                
+                // Check if input is a valid SHA-256 hash
+                if (isValidSHA256(userInput)) {
+                    // Redirect directly to the hash folder
+                    window.location.href = `data/${userInput}/index.html`;
+                    return;
+                }
+                
+                // If not a valid hash, compute SHA-256 of the input
+                try {
+                    const hash = await sha256(userInput);
+                    // Redirect to the computed hash folder
+                    window.location.href = `data/${hash}/index.html`;
+                } catch (error) {
+                    console.error('Error computing hash:', error);
+                    // Fall back to normal search if hash computation fails
+                    currentEntries = filterEntries(userInput);
+                    displayEntries(currentEntries);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
