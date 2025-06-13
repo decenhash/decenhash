@@ -1,0 +1,3 @@
+http://localhost/decenhash/
+http://localhost/decenhash/block.php
+http://localhost/decenhash/blockchain.php
