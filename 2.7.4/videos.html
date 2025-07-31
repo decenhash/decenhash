@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Video Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        a {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .gallery-container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .thumbnail {
+            width: calc(50% - 20px);
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.03);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            width: 80%;
+            max-width: 900px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-container {
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            position: relative;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+
+        .video-actions {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            background-color: #f0f0f0;
+            color: #333;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .action-btn.like {
+            color: #ff4757;
+        }
+
+        .action-btn.reply {
+            color: #2ed573;
+        }
+
+        .action-btn.comment {
+            color: #1e90ff;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .next-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 30px;
+            background-color: #808080;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            background-color: #6a6a6a;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .thumbnail {
+                width: 100%;
+            }
+            
+            .gallery-container {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 95%;
+            }
+            
+            .video-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div align="right"><a href="add_video.php">Add video</a></div>
+    <div class="gallery-container">
+        <h1>URLTube</h1>
+        
+        <div class="thumbnails" id="thumbnailsContainer">
+            <!-- Thumbnails will be added dynamically by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Next Button -->
+    <button class="next-btn" id="nextBtn">Next</button>
+
+    <!-- Modal -->
+    <div class="modal" id="videoModal">
+        <button class="close-btn" id="closeModal">&times;</button>
+        <div class="modal-content">
+            <div class="video-container">
+                <video id="videoPlayer" controls>
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-actions">
+                <button class="action-btn like" id="likeBtn">
+                    Like
+                </button>
+                <button class="action-btn reply" id="replyBtn">
+                    Reply
+                </button>
+                <button class="action-btn comment" id="commentBtn">
+                    Comment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnailsContainer = document.getElementById('thumbnailsContainer');
+            const modal = document.getElementById('videoModal');
+            const closeModal = document.getElementById('closeModal');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const likeBtn = document.getElementById('likeBtn');
+            const replyBtn = document.getElementById('replyBtn');
+            const commentBtn = document.getElementById('commentBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            let currentVideoSrc = '';
+            let currentVideoFilename = '';
+            let currentPage = 0;
+
+            // Function to load videos based on page number
+            function loadVideos(page) {
+                let videoFile = 'json_videos/videos.json';
+                if (page > 0) {
+                    videoFile = `json_videos/videos_${page}.json`;
+                }
+
+                fetch(videoFile)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to load videos');
+                        }
+                        return response.json();
+                    })
+                    .then(videos => {
+                        // Clear existing thumbnails
+                        thumbnailsContainer.innerHTML = '';
+                        
+                        // Generate thumbnails dynamically from JSON data
+                        videos.forEach(video => {
+                            const thumbnail = document.createElement('div');
+                            thumbnail.className = 'thumbnail';
+                            thumbnail.setAttribute('data-video-src', video.video);
+                            thumbnail.setAttribute('data-video-filename', video.filename);
+                            
+                            const img = document.createElement('img');
+                            img.src = video.thumbnail;
+                            img.alt = video.title;
+                            
+                            thumbnail.appendChild(img);
+                            thumbnailsContainer.appendChild(thumbnail);
+                        });
+
+                        // Set up thumbnail click handlers after they're created
+                        const thumbnails = document.querySelectorAll('.thumbnail');
+                        
+                        thumbnails.forEach(thumbnail => {
+                            thumbnail.addEventListener('click', function() {
+                                currentVideoSrc = this.getAttribute('data-video-src');
+                                currentVideoFilename = this.getAttribute('data-video-filename');
+                                videoPlayer.src = currentVideoSrc;
+                                modal.style.display = 'flex';
+                                document.body.style.overflow = 'hidden';
+                                
+                                // Play the video when modal opens
+                                setTimeout(() => {
+                                    videoPlayer.play();
+                                }, 300);
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading video data:', error);
+                        thumbnailsContainer.innerHTML = '<p>No more videos available.</p>';
+                        nextBtn.style.display = 'none';
+                    });
+            }
+
+            // Load initial videos
+            loadVideos(currentPage);
+
+            // Next button functionality
+            nextBtn.addEventListener('click', function() {
+                currentPage++;
+                loadVideos(currentPage);
+            });
+
+            // Close modal
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+                videoPlayer.pause();
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    videoPlayer.pause();
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            // Like button functionality - redirect to like.php
+            likeBtn.addEventListener('click', function() {
+                if (currentVideoFilename) {
+                    window.location.href = `like.php?reply=${encodeURIComponent(currentVideoFilename)}`;
+                }
+            });
+            
+            // Reply button functionality - redirect to reply.php
+            replyBtn.addEventListener('click', function() {
+                if (currentVideoFilename) {
+                    window.location.href = `index_simple.php?reply=${encodeURIComponent(currentVideoFilename)}`;
+                }
+            });
+            
+            // Comment button functionality - redirect to comment.php
+            commentBtn.addEventListener('click', function() {
+                if (currentVideoFilename) {
+                    window.location.href = `index_simple.php?reply=${encodeURIComponent(currentVideoFilename)}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

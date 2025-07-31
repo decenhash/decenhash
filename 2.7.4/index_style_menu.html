@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decenhash</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Decenhash</h1>
+        <hr class="border-gray-300 mb-6">
+        <div class="space-y-4">
+            <a href="upload.php" class="block text-blue-600 hover:text-blue-800 font-medium hover-scale">Simple Upload</a>
+            <a href="index_search.html" class="block text-blue-600 hover:text-blue-800 font-medium hover-scale">JSON</a>
+            <a href="index_simple.php" class="block text-blue-600 hover:text-blue-800 font-medium hover-scale">HTML</a>
+            <a href="php_others/upload/index.php" class="block text-blue-600 hover:text-blue-800 font-medium hover-scale">MySQL</a>
+            <a href="metadata.php" class="block text-blue-600 hover:text-blue-800 font-medium hover-scale">Add Metadata</a>
+            <a href="server.php" class="block text-blue-600 hover:text-blue-800 font-medium hover-scale">Add Server Information</a>
+        </div>
+    </div>
+</body>
+</html>

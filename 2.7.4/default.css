@@ -1,0 +1,116 @@
+/* Simplified Forum Style CSS - Only targeting a, div, br, body */
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body::before {
+  content: "Comments";
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f5f5;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Link styling */
+a {
+  text-decoration: none;
+  margin-right: 15px;
+  display: inline-block;
+}
+
+/* Style for action links (Reply and Open) */
+a[href*="reply"], a[href*="index.html"] {
+  color: #3498db;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #ebf5fb;
+  transition: all 0.2s;
+}
+
+a[href*="reply"]:hover, a[href*="index.html"]:hover {
+  background-color: #d6eaf8;
+  color: #2980b9;
+}
+
+/* Style for the timestamp/ID link */
+a[href$=".txt"] {
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+/* Create spacing between post groups */
+br {
+  display: block;
+  margin: 8px 0;
+  content: "";
+  border-bottom: 1px solid #eaeaea;
+}
+
+/* Style for divs that might contain posts
+div {
+  padding: 12px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+*/
+
+/* Give some spacing to consecutive links without containers */
+a + a {
+  margin-left: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  a {
+    margin-bottom: 5px;
+  }
+
+  a[href*="reply"], a[href*="index.html"], a[href$=".txt"] {
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+}
+
+.ads {
+  max-width: 100%;
+  margin: 20px auto;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ads img.banner-ad {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border: none;
+  transition: transform 0.3s ease;
+}
+
+.ads img.banner-ad:hover {
+  transform: scale(1.02);
+}

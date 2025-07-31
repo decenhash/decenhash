@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple transition for results appearing */
+        .result-item {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<div align="right" style="padding: 5px;font-size: 11px; font-family: verdana;">
+
+<a href="insert_json.php">Insert Link</a> |
+
+<a href="upload_json.php">Upload</a> |
+
+<a href="videos.html">Videos</a> |
+
+<a href="music.html">Music</a> |
+
+<a href="php_others/groups/groups.html">Groups</a> |
+
+<a href="index_simple.php">Simple Upload</a> |
+
+<a href="json_ranking.php">Rank</a> |
+
+<a href="login.php"><b>Login</b></a>
+
+&nbsp;
+</div>
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-3xl">
+        <div class="bg-white shadow-lg rounded-xl p-6 sm:p-8">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-2">Search</h1>
+            <p class="text-center text-gray-500 mb-6">Type a keyword to find indexed links.</p>
+
+            <!-- Search Input -->
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                </div>
+                <input type="text" id="searchInput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 pl-10" placeholder="Search for 'compute', 'tech', etc...">
+            </div>
+
+            <!-- Results Container -->
+            <div id="resultsContainer" class="mt-6">
+                <div class="text-center text-gray-400 p-4">
+                    <p>Results will appear here automatically.</p>
+                </div>
+            </div>
+        </div>
+        <footer class="text-center text-gray-500 text-xs mt-6">
+            <p><b>Tip:</b> You can also search by date. For example, instead of 'car' you can also search for 'car20251201' (year, month and day filter format). Searching by date is only allowed when the file exceeds the size limit.</p> 
+            <p>All rights reserved</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT LOGIC ---
+
+        const searchInput = document.getElementById('searchInput');
+        const resultsContainer = document.getElementById('resultsContainer');
+        let debounceTimeout;
+
+        /**
+         * Fetches and displays search results based on the query.
+         * This is an async function to handle the fetch API cleanly.
+         */
+        const performSearch = async (query) => {
+            // If the query is too short, show an informational message.
+            if (query.length < 3) {
+                resultsContainer.innerHTML = `
+                    <div class="text-center text-gray-400 p-4">
+                        <p>Please type at least 3 characters to search.</p>
+                    </div>`;
+                return;
+            }
+
+            // Show a loading indicator while fetching data.
+            resultsContainer.innerHTML = `
+                <div class="text-center text-blue-500 p-4">
+                    <p>Searching...</p>
+                </div>`;
+
+            try {
+                // Construct the path to the JSON file.
+                const filePath = `json_search/${query}.json`;
+                const response = await fetch(filePath);
+
+                // Check if the file was found (status 200 OK).
+                if (!response.ok) {
+                    // If the file doesn't exist, throw an error to be caught below.
+                    throw new Error('File not found');
+                }
+
+                // Parse the JSON data from the response.
+                const results = await response.json();
+
+                // Clear the results container before adding new results.
+                resultsContainer.innerHTML = '';
+
+                if (results && results.length > 0) {
+                    // If we have results, create and append them to the container.
+                    const uniqueLinks = new Map();
+                    results.forEach(result => {
+                        // Ensure we don't show the same link multiple times for one query
+                        if (!uniqueLinks.has(result.link)) {
+                            uniqueLinks.set(result.link, result.title);
+                        }
+                    });
+
+                    uniqueLinks.forEach((title, link) => {
+                        const resultElement = document.createElement('div');
+                        // Use flexbox to align content and buttons
+                        resultElement.className = 'result-item bg-gray-50 p-4 mb-3 rounded-lg border border-gray-200 opacity-0 flex justify-between items-start md:items-center';
+                        
+                        // Use encodeURIComponent to safely pass the link as a URL parameter
+                        const encodedLink = encodeURIComponent(link);
+
+                        resultElement.innerHTML = `
+                            <div class="flex-grow mr-4">
+                                <a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold">
+                                    ${title}
+                                </a>
+                                <p class="text-sm text-gray-500 mt-1 break-all">${link}</p>
+                            </div>
+                            <div class="flex-shrink-0 flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-2">
+                                <a href="like.php?reply=${encodedLink}" target="_blank" rel="noopener noreferrer" class="text-white bg-green-500 hover:bg-green-600 font-medium rounded-lg text-xs px-3 py-1.5 text-center transition-colors duration-200">
+                                    Like
+                                </a>
+                                <a href="index_simple.php?reply=${encodedLink}" target="_blank" rel="noopener noreferrer" class="text-white bg-gray-500 hover:bg-gray-600 font-medium rounded-lg text-xs px-3 py-1.5 text-center transition-colors duration-200">
+                                    Comment
+                                </a>
+                            </div>
+                        `;
+                        resultsContainer.appendChild(resultElement);
+                        // Trigger a fade-in effect for a smoother appearance.
+                        setTimeout(() => resultElement.style.opacity = 1, 50);
+                    });
+
+                } else {
+                    // If the JSON file is empty.
+                    resultsContainer.innerHTML = `
+                        <div class="text-center text-gray-500 p-4">
+                            <p>No results found for "<strong>${query}</strong>".</p>
+                        </div>`;
+                }
+
+            } catch (error) {
+                // This block will run if fetch fails (e.g., file not found).
+                console.error("Search error:", error);
+                resultsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 p-4">
+                        <p>No results found for "<strong>${query}</strong>". Try another term.</p>
+                    </div>`;
+            }
+        };
+
+        // Listen for the 'input' event on the search box.
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+
+            // Clear any existing debounce timer.
+            clearTimeout(debounceTimeout);
+
+            if (query === '') {
+                // If the input is cleared, reset the results area.
+                resultsContainer.innerHTML = `
+                    <div class="text-center text-gray-400 p-4">
+                        <p>Results will appear here automatically.</p>
+                    </div>`;
+                return;
+            }
+
+            // Set a new timer. The search will only run after the user stops typing for 300ms.
+            // This prevents sending a request for every single keystroke.
+            debounceTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        });
+    </script>
+
+</body>
+</html>
