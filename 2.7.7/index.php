@@ -1,0 +1,45 @@
+<?php session_start(); ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Upload</title>
+ 
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            padding: 5px 0px 5px 50px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div align="right">
+<a href="login.php"">Login</a> |
+<a href="register.php"">Register</a> |
+<a href="logout.php">Logout</a>
+</div>
+<h1>Decenhash</h1>
+<hr>
+<br>
+
+<div>
+<a href="upload.php"">Simple upload</a> - Save a file in the 'files' directory using the SHA-256 hash as its name.<br>
+<a href="blockchain.php"">Block</a> - Simple blockchain based on text blocks, file's URL and metadata.<br>
+<a href="stock.php">Stock</a> - The user can purchase the ownership of a file (hash) or automatically sell it.<br>
+<a href="rank.php">Graph</a> <br>
+
+<br>
+<div style="font-size: 10px";>
+<a href="search_block.php">Simple search,</a>
+<a href="main_tools/index_search.html">JSON,</a>
+<a href="main_tools/index_simple.php">HTML,</a>
+<a href="php_others/upload/index.php">MySQL</a><br>
+</div>
+</div>
+<br>
+<i>Notice: Create the database (DB) "decenhash" to use the MySQL scripts.</i>
+
+</body>
+</html>
