@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <!-- Use Tailwind CSS via CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Use Inter font for a modern look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* Custom styling for the logo */
+        .logo-text {
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen items-center justify-between p-4 sm:p-8">
+
+    <!-- Main content container -->
+    <div class="flex flex-col items-center justify-center flex-1 w-full max-w-2xl px-4">
+        
+        <!-- Logo/Site Title -->
+        <div class="mb-10 text-center">
+            <h1 class="text-5xl sm:text-7xl font-bold logo-text">MySite</h1>
+            <p class="text-gray-500 mt-2 text-lg sm:text-xl">Discover and explore content.</p>
+        </div>
+
+        <!-- Search Form -->
+        <form id="searchForm" class="w-full flex flex-col sm:flex-row items-center gap-4">
+            <input 
+                id="searchInput"
+                type="text" 
+                name="search" 
+                placeholder="Enter search term or SHA-256 hash..." 
+                class="w-full p-4 sm:p-5 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 transition-colors duration-200 shadow-md"
+            >
+            <button 
+                id="searchButton"
+                type="submit" 
+                class="w-full sm:w-auto px-8 py-4 sm:py-5 text-lg font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors duration-200 shadow-md transform active:scale-95"
+            >
+                Search
+            </button>
+        </form>
+
+        <!-- Status Message Display -->
+        <div id="statusMessage" class="mt-6 p-4 rounded-lg shadow-inner text-center font-medium hidden"></div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-400 text-sm mt-8">
+        &copy; 2024 All rights reserved.
+    </footer>
+
+    <!-- JavaScript for search logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchForm = document.getElementById('searchForm');
+            const searchInput = document.getElementById('searchInput');
+            const statusMessageDiv = document.getElementById('statusMessage');
+
+            // Asynchronous function to generate a SHA-256 hash
+            async function generateSha256(input) {
+                // Encode the input string to a UTF-8 array buffer
+                const encoder = new TextEncoder();
+                const data = encoder.encode(input);
+
+                // Use the SubtleCrypto API to get the hash
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+                // Convert the buffer to a hexadecimal string
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                return hashHex;
+            }
+            
+            // Function to display a message to the user
+            function showMessage(message, type = 'error') {
+                statusMessageDiv.textContent = message;
+                statusMessageDiv.classList.remove('hidden');
+                if (type === 'error') {
+                    statusMessageDiv.classList.add('bg-red-100', 'text-red-700');
+                    statusMessageDiv.classList.remove('bg-green-100', 'text-green-700');
+                } else {
+                    statusMessageDiv.classList.add('bg-green-100', 'text-green-700');
+                    statusMessageDiv.classList.remove('bg-red-100', 'text-red-700');
+                }
+            }
+            
+            // Event listener for form submission
+            searchForm.addEventListener('submit', async (event) => {
+                // Prevent the default form submission (page reload)
+                event.preventDefault();
+
+                // Get the trimmed value from the input field
+                const searchTerm = searchInput.value.trim();
+
+                // Hide any previous messages
+                statusMessageDiv.classList.add('hidden');
+
+                // Check for empty input
+                if (searchTerm === '') {
+                    showMessage("Please enter a search term.", 'error');
+                    return;
+                }
+
+                let finalHash;
+                // Regular expression to check if the input is a valid SHA-256 hash
+                const isHash = /^[a-f0-9]{64}$/i.test(searchTerm);
+
+                if (isHash) {
+                    // If it's already a hash, use it directly
+                    finalHash = searchTerm;
+                } else {
+                    // Otherwise, generate the hash from the search term
+                    finalHash = await generateSha256(searchTerm);
+                }
+
+                // Construct the new URL and redirect the user
+                const redirectUrl = `data/${finalHash}/index.html`;
+                
+                // IMPORTANT: In this client-side version, we cannot check if the file exists on the server.
+                // The browser will be redirected, and if the file is not found, a standard 404 page will be displayed.
+                window.location.href = redirectUrl;
+            });
+        });
+    </script>
+</body>
+</html>
