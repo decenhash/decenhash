@@ -10,8 +10,8 @@ FileDownloader.java - If the server has a list of files in a text file where eac
 a directory and the file name, for example, "json/test.json"
 
 @decenhash
-(t.me/decenhash)[https://t.me/decenhash]
-(decenhash.netlify.app)[https://decenhash.netlify.app]
+https://t.me/decenhash
+https://decenhash.netlify.app
 decenhash@gmail.com
 
 ---------------------
