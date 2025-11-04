@@ -1,13 +1,29 @@
-## EPHEMERA v1.0.5 - by Decenhash
+## Download EPHEMERA - Static Site Generator and File Sharing 
 ------------------------------
 
-A simple and robust solution for creating static and distributed websites
+A brief explanation of the functionalities
 
-Replication - Downloads all links from a page. Only works with the 'json', 'json_search', 'files' and 'others' directories. 
-Make sure the directory is at the root or top, for example "http://example.com/json/test.json".
+files.php : List all files
 
-FileDownloader.java - If the server has a list of files in a text file where each line stores
-a directory and the file name, for example, "json/test.json"
+rank_file.php : Rank of more clicked files
+
+list_and_rename.php : Rename all files of 'tmp_files' folder (e.g: cat_1.jpg, cat_2.jpg ...)
+
+json_creator.php : Create the JSON files for search based in the files of 'tmp_files' folder.
+
+replicate.php : Replicate one site using its 'files.php' page
+
+file_downloader.php : Replicate one site using its 'files.txt'
+
+files_html.php / files_txt.php : List all files and create a static page or text file
+
+servers.php / Insert : Search in servers or insert
+
+search_engine.php : Search for sites
+
+comment.php : Comment a file
+
+Server.java / Client.java : Download all files from a server using the port '12345'
 
 @decenhash
 https://t.me/decenhash
