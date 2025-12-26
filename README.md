@@ -3,10 +3,8 @@
 
 Hash, backup and share your files easily.
 
-Server.java / Client.java : Download all files from a server using the port '12345'
 
 @decenhash
-https://decenhash.netlify.app
 decenhash@gmail.com
 
 ---------------------
